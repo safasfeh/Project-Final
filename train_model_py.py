@@ -140,26 +140,30 @@ if submitted:
         if var in limits:
             limit_op = limits[var]['op']
             limit_val = limits[var]['value']
+        
+        if limit_op == '<=':
+            assessment = "✅ OK" if value <= limit_val else "❌ Exceeds Limit"
+            if value > limit_val:
+                reuse_safe = False
+        elif limit_op == '>':
+            assessment = "✅ OK" if value > limit_val else "❌ Exceeds Limit"
+            if value <= limit_val:
+                reuse_safe = False
+        else:
+            assessment = "--"
             
-            if limit_op == '<=':
-                assessment = "✅ OK" if value <= limit_val else "❌ Exceeds Limit"
-                if value > limit_val:
-                    reuse_safe = False
-            elif limit_op == '>':
-                assessment = "✅ OK" if value > limit_val else "❌ Exceeds Limit"
-                if value <= limit_val:
-                    reuse_safe = False
-            else:
-                assessment = "--"
-
+        std_limit = limit_val  # Ensure std_limit is always assigned
+    else:
+        std_limit = "--"  # Default value when no limit exists for the parameter
+        assessment = "--"
     
-        quality_df.loc[len(quality_df)] = [
-            var,
-            round(value, 3),
-            std_limit,
-            unit,
-            assessment
-        ]
+    quality_df.loc[len(quality_df)] = [
+        var,
+        round(value, 3),
+        std_limit,
+        unit,
+        assessment
+    ]
 
     
 
