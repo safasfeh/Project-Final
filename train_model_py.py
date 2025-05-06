@@ -138,14 +138,20 @@ if submitted:
         unit = units_dict[var]
         
         if var in limits:
-            _, limit_val = limits[var]
-            assessment = "✅ OK" if value <= limit_val else "❌ Exceeds Limit"
-            if value > limit_val:
-                reuse_safe = False
-            std_limit = limit_val
-        else:
-            std_limit = "--"
-            assessment = "--"
+            limit_op = limits[var]['op']
+            limit_val = limits[var]['value']
+            
+            if limit_op == '<=':
+                assessment = "✅ OK" if value <= limit_val else "❌ Exceeds Limit"
+                if value > limit_val:
+                    reuse_safe = False
+            elif limit_op == '>':
+                assessment = "✅ OK" if value > limit_val else "❌ Exceeds Limit"
+                if value <= limit_val:
+                    reuse_safe = False
+            else:
+                assessment = "--"
+
     
         quality_df.loc[len(quality_df)] = [
             var,
